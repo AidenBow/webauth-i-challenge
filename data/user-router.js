@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs")
 const schema = require("./user-model")
+const requireAuth = require("../auth/auth-required-middleware")
 
-router.get("/", (req, res) => {
+router.get("/users", requireAuth, (req, res) => {
   schema.find()
     .then(users => {
       res.status(200).json(users)
@@ -13,7 +14,7 @@ router.get("/", (req, res) => {
     })
 })
 
-router.post("/", (req, res) => {
+router.post("/register", (req, res) => {
   let user = req.body
   const hash = bcrypt.hashSync(user.password, 12)
   user.password = hash
