@@ -14,6 +14,22 @@ router.get("/users", requireAuth, (req, res) => {
     })
 })
 
+router.get("/logout", (req, res) => {
+  // if (req.session) {
+  //   req.session.reset(err => {
+  //     if (err) {
+  //       res.status(500).json({message: "server error", error: err})
+  //     } else {
+  //       res.status(200).json({message: "logged out!"})
+  //     }
+  //   })
+  // } else {
+  //   res.status(200).json({message: "you weren't logged-in in the first place"})
+  // }
+  req.session.reset()
+  res.json({message: "logged out"})
+})
+
 router.post("/register", (req, res) => {
   let user = req.body
   const hash = bcrypt.hashSync(user.password, 12)
@@ -33,8 +49,10 @@ router.post("/login", (req, res) => {
 
   schema.findBy({username}) 
     .first()
+    
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
+        
         req.session.user = user
         res.status(200).json(user)
       } else {
